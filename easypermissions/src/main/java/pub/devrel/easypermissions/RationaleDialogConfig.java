@@ -7,9 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 
-/**
- * Configuration for either {@link RationaleDialogFragment} or {@link RationaleDialogFragmentCompat}.
- */
 class RationaleDialogConfig {
 
     private static final String KEY_POSITIVE_BUTTON = "positiveButton";

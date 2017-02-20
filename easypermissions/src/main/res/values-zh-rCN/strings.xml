@@ -1,0 +1,4 @@
+<resources>
+    <string name="rationale_ask_again">请开启应用所需权限,开通后可正常使用.</string>
+    <string name="title_settings_dialog">权限申请</string>
+</resources>
