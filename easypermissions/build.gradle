@@ -1,4 +1,8 @@
 apply plugin: 'com.android.library'
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group='com.github.shucc'
 
 android {
     compileSdkVersion compileSdk
@@ -8,7 +12,7 @@ android {
         minSdkVersion 14
         targetSdkVersion targetSdk
         versionCode 1
-        versionName mavenVersion
+        versionName '0.1.0'
     }
 
     buildTypes {
@@ -22,6 +26,3 @@ android {
 dependencies {
     compile "com.android.support:appcompat-v7:$support_library_version"
 }
-
-apply from: 'maven.gradle'
-apply from: 'bintray.gradle'
