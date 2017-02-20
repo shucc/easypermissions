@@ -64,11 +64,9 @@ public class EasyPermissions {
         // Always return true for SDK < M, let the system deal with the permissions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "hasPermissions: API version < M, returning true by default");
-
             // DANGER ZONE!!! Changing this will break the library.
             return true;
         }
-
         for (String perm : perms) {
             boolean hasPerm = (ContextCompat.checkSelfPermission(context, perm) ==
                     PackageManager.PERMISSION_GRANTED);
@@ -76,22 +74,19 @@ public class EasyPermissions {
                 return false;
             }
         }
-
         return true;
     }
 
     /**
      * Request a set of permissions, showing a rationale if the system requests it.
      *
-     * @see #requestPermissions(Activity, String, int, int, int, String...)
+     * @see #requestPermissions(Activity, int, int, int, String...)
      */
     public static void requestPermissions(@NonNull Activity activity,
-                                          @NonNull String rationale,
                                           int requestCode,
                                           @NonNull String... perms) {
         requestPermissions(
                 activity,
-                rationale,
                 android.R.string.ok,
                 android.R.string.cancel,
                 requestCode,
@@ -105,8 +100,6 @@ public class EasyPermissions {
      *                       ActivityCompat.OnRequestPermissionsResultCallback} or override {@link
      *                       FragmentActivity#onRequestPermissionsResult(int, String[], int[])} if
      *                       it extends from {@link FragmentActivity}.
-     * @param rationale      a message explaining why the application needs this set of permissions,
-     *                       will be displayed if the user rejects the request the first time.
      * @param positiveButton custom text for positive button
      * @param negativeButton custom text for negative button
      * @param requestCode    request code to track this request, must be < 256.
@@ -115,7 +108,6 @@ public class EasyPermissions {
      */
     @SuppressLint("NewApi")
     public static void requestPermissions(@NonNull Activity activity,
-                                          @NonNull String rationale,
                                           @StringRes int positiveButton,
                                           @StringRes int negativeButton,
                                           int requestCode,
@@ -126,7 +118,7 @@ public class EasyPermissions {
         }
 
         if (shouldShowRationale(activity, perms)) {
-            RationaleDialogConfig rationaleDialogConfig = new RationaleDialogConfig(positiveButton, negativeButton, rationale, requestCode, perms);
+            PermissionConfig rationaleDialogConfig = new PermissionConfig(positiveButton, negativeButton, requestCode, perms);
             onTriggerRequestPermissions(activity, rationaleDialogConfig);
         } else {
             ActivityCompat.requestPermissions(activity, perms, requestCode);
@@ -136,15 +128,13 @@ public class EasyPermissions {
     /**
      * Request a set of permissions, showing rationale if the system requests it.
      *
-     * @see #requestPermissions(Fragment, String, int, int, int, String...)
+     * @see #requestPermissions(Fragment, int, int, int, String...)
      */
     public static void requestPermissions(@NonNull Fragment fragment,
-                                          @NonNull String rationale,
                                           int requestCode,
                                           @NonNull String... perms) {
         requestPermissions(
                 fragment,
-                rationale,
                 android.R.string.ok,
                 android.R.string.cancel,
                 requestCode,
@@ -156,11 +146,10 @@ public class EasyPermissions {
      *
      * @param fragment {@link Fragment} requesting permissions. Should override {@link
      *                 Fragment#onRequestPermissionsResult(int, String[], int[])}.
-     * @see #requestPermissions(Activity, String, int, int, int, String...)
+     * @see #requestPermissions(Activity, int, int, int, String...)
      */
     @SuppressLint("NewApi")
     public static void requestPermissions(@NonNull Fragment fragment,
-                                          @NonNull String rationale,
                                           @StringRes int positiveButton,
                                           @StringRes int negativeButton,
                                           int requestCode,
@@ -171,7 +160,7 @@ public class EasyPermissions {
         }
 
         if (shouldShowRationale(fragment, perms)) {
-            RationaleDialogConfig rationaleDialogConfig = new RationaleDialogConfig(positiveButton, negativeButton, rationale, requestCode, perms);
+            PermissionConfig rationaleDialogConfig = new PermissionConfig(positiveButton, negativeButton, requestCode, perms);
             onTriggerRequestPermissions(fragment, rationaleDialogConfig);
         } else {
             fragment.requestPermissions(perms, requestCode);
@@ -181,16 +170,14 @@ public class EasyPermissions {
     /**
      * Request a set of permissions, showing rationale if the system requests it.
      *
-     * @see #requestPermissions(android.app.Fragment, String, int, int, int, String...)
+     * @see #requestPermissions(android.app.Fragment, int, int, int, String...)
      */
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public static void requestPermissions(@NonNull android.app.Fragment fragment,
-                                          @NonNull String rationale,
                                           int requestCode,
                                           @NonNull String... perms) {
         requestPermissions(
                 fragment,
-                rationale,
                 android.R.string.ok,
                 android.R.string.cancel,
                 requestCode,
@@ -202,12 +189,11 @@ public class EasyPermissions {
      *
      * @param fragment {@link android.app.Fragment} requesting permissions. Should override {@link
      *                 android.app.Fragment#onRequestPermissionsResult(int, String[], int[])}.
-     * @see #requestPermissions(Activity, String, int, int, int, String...)
+     * @see #requestPermissions(Activity, int, int, int, String...)
      */
     @SuppressLint("NewApi")
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public static void requestPermissions(@NonNull android.app.Fragment fragment,
-                                          @NonNull String rationale,
                                           @StringRes int positiveButton,
                                           @StringRes int negativeButton,
                                           int requestCode,
@@ -218,14 +204,14 @@ public class EasyPermissions {
         }
 
         if (shouldShowRationale(fragment, perms)) {
-            RationaleDialogConfig rationaleDialogConfig = new RationaleDialogConfig(positiveButton, negativeButton, rationale, requestCode, perms);
+            PermissionConfig rationaleDialogConfig = new PermissionConfig(positiveButton, negativeButton, requestCode, perms);
             onTriggerRequestPermissions(fragment, rationaleDialogConfig);
         } else {
             fragment.requestPermissions(perms, requestCode);
         }
     }
 
-    private static void onTriggerRequestPermissions(Object host, RationaleDialogConfig rationaleDialogConfig) {
+    private static void onTriggerRequestPermissions(Object host, PermissionConfig rationaleDialogConfig) {
         if (host instanceof Fragment) {
             ((Fragment) host).requestPermissions(rationaleDialogConfig.permissions, rationaleDialogConfig.requestCode);
         } else if (host instanceof android.app.Fragment) {

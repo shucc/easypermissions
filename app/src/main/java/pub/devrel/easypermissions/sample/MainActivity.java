@@ -67,8 +67,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Toast.makeText(this, "TODO: Camera things", Toast.LENGTH_LONG).show();
         } else {
             // Ask for one permission
-            EasyPermissions.requestPermissions(this, getString(R.string.rationale_camera),
-                    RC_CAMERA_PERM, Manifest.permission.CAMERA);
+            EasyPermissions.requestPermissions(this, RC_CAMERA_PERM, Manifest.permission.CAMERA);
         }
     }
 
@@ -80,8 +79,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Toast.makeText(this, "TODO: Location and Contacts things", Toast.LENGTH_LONG).show();
         } else {
             // Ask for both permissions
-            EasyPermissions.requestPermissions(this, getString(R.string.rationale_location_contacts),
-                    RC_LOCATION_CONTACTS_PERM, perms);
+            EasyPermissions.requestPermissions(this, RC_LOCATION_CONTACTS_PERM, perms);
         }
     }
 

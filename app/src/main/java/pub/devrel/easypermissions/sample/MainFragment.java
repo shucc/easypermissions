@@ -56,8 +56,7 @@ public class MainFragment extends Fragment implements EasyPermissions.Permission
             Toast.makeText(getActivity(), "TODO: SMS things", Toast.LENGTH_LONG).show();
         } else {
             // Request one permission
-            EasyPermissions.requestPermissions(this, getString(R.string.rationale_sms),
-                    RC_SMS_PERM, Manifest.permission.READ_SMS);
+            EasyPermissions.requestPermissions(this, RC_SMS_PERM, Manifest.permission.READ_SMS);
         }
     }
 

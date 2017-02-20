@@ -15,7 +15,6 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 /**
@@ -370,7 +369,5 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
                     mNegativeListener,
                     mRequestCode);
         }
-
     }
-
 }
