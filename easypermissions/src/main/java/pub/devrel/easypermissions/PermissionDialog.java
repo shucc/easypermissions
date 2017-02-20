@@ -37,7 +37,7 @@ public class PermissionDialog extends AppCompatDialog {
 
     public PermissionDialog(Context context, int layoutId, String title, String content, String textNegative
             , String textPositive) {
-        super(context, R.style.MyDialog);
+        super(context, R.style.PermissionDialog);
         this.context = context;
         this.layoutId = layoutId;
         this.title = title;
