@@ -42,6 +42,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
 
     static final String EXTRA_APP_SETTINGS = "extra_app_settings";
 
+    private final int layoutId;
     private final String mRationale;
     private final String mTitle;
     private final String mPositiveButtonText;
@@ -52,6 +53,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
     private DialogInterface.OnClickListener mNegativeListener;
 
     private AppSettingsDialog(Parcel in) {
+        layoutId = in.readInt();
         mRationale = in.readString();
         mTitle = in.readString();
         mPositiveButtonText = in.readString();
@@ -61,6 +63,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
 
     private AppSettingsDialog(@NonNull final Object activityOrFragment,
                               @NonNull final Context context,
+                              int layoutID,
                               @Nullable String rationale,
                               @Nullable String title,
                               @Nullable String positiveButtonText,
@@ -69,6 +72,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
                               int requestCode) {
         mActivityOrFragment = activityOrFragment;
         mContext = context;
+        layoutId = layoutID;
         mRationale = rationale;
         mTitle = title;
         mPositiveButtonText = positiveButtonText;
@@ -121,6 +125,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
     void showDialog() {
         new PermissionDialog.Builder(mContext)
                 .setCancelable(false)
+                .setLayoutID(layoutId)
                 .setTitle(mTitle)
                 .setMessage(mRationale)
                 .setPositiveButton(mPositiveButtonText, this)
@@ -148,6 +153,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(layoutId);
         dest.writeString(mRationale);
         dest.writeString(mTitle);
         dest.writeString(mPositiveButtonText);
@@ -162,6 +168,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
 
         private Object mActivityOrFragment;
         private Context mContext;
+        private int layoutId = -1;
         private String mRationale;
         private String mTitle;
         private String mPositiveButton;
@@ -246,6 +253,10 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
             mContext = fragment.getActivity();
         }
 
+        public Builder setLayoutID(int layoutId) {
+            this.layoutId = layoutId;
+            return this;
+        }
 
         /**
          * Set the title dialog. Default is "Permissions Required".
@@ -349,6 +360,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
          * call to {@link AppSettingsDialog#show()}.
          */
         public AppSettingsDialog build() {
+            layoutId = layoutId == -1 ? R.layout.dialog_perm_default : layoutId;
             mRationale = TextUtils.isEmpty(mRationale) ?
                     mContext.getString(R.string.rationale_ask_again) : mRationale;
             mTitle = TextUtils.isEmpty(mTitle) ?
@@ -362,6 +374,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
             return new AppSettingsDialog(
                     mActivityOrFragment,
                     mContext,
+                    layoutId,
                     mRationale,
                     mTitle,
                     mPositiveButton,
