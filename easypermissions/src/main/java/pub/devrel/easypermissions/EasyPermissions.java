@@ -126,13 +126,8 @@ public class EasyPermissions {
         }
 
         if (shouldShowRationale(activity, perms)) {
-            showRationaleDialogFragment(
-                    activity.getFragmentManager(),
-                    rationale,
-                    positiveButton,
-                    negativeButton,
-                    requestCode,
-                    perms);
+            RationaleDialogConfig rationaleDialogConfig = new RationaleDialogConfig(positiveButton, negativeButton, rationale, requestCode, perms);
+            onTriggerRequestPermissions(activity, rationaleDialogConfig);
         } else {
             ActivityCompat.requestPermissions(activity, perms, requestCode);
         }
@@ -176,9 +171,8 @@ public class EasyPermissions {
         }
 
         if (shouldShowRationale(fragment, perms)) {
-            RationaleDialogFragmentCompat
-                    .newInstance(positiveButton, negativeButton, rationale, requestCode, perms)
-                    .show(fragment.getChildFragmentManager(), DIALOG_TAG);
+            RationaleDialogConfig rationaleDialogConfig = new RationaleDialogConfig(positiveButton, negativeButton, rationale, requestCode, perms);
+            onTriggerRequestPermissions(fragment, rationaleDialogConfig);
         } else {
             fragment.requestPermissions(perms, requestCode);
         }
@@ -224,15 +218,27 @@ public class EasyPermissions {
         }
 
         if (shouldShowRationale(fragment, perms)) {
-            showRationaleDialogFragment(
-                    fragment.getChildFragmentManager(),
-                    rationale,
-                    positiveButton,
-                    negativeButton,
-                    requestCode,
-                    perms);
+            RationaleDialogConfig rationaleDialogConfig = new RationaleDialogConfig(positiveButton, negativeButton, rationale, requestCode, perms);
+            onTriggerRequestPermissions(fragment, rationaleDialogConfig);
         } else {
             fragment.requestPermissions(perms, requestCode);
+        }
+    }
+
+    private static void onTriggerRequestPermissions(Object host, RationaleDialogConfig rationaleDialogConfig) {
+        if (host instanceof Fragment) {
+            ((Fragment) host).requestPermissions(rationaleDialogConfig.permissions, rationaleDialogConfig.requestCode);
+        } else if (host instanceof android.app.Fragment) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ((android.app.Fragment) host)
+                        .requestPermissions(rationaleDialogConfig.permissions, rationaleDialogConfig.requestCode);
+            } else {
+                throw new IllegalArgumentException(
+                        "Target SDK needs to be greater than 23 if caller is android.app.Fragment");
+            }
+        } else if (host instanceof FragmentActivity) {
+            ActivityCompat.requestPermissions(
+                    (FragmentActivity) host, rationaleDialogConfig.permissions, rationaleDialogConfig.requestCode);
         }
     }
 
@@ -419,21 +425,6 @@ public class EasyPermissions {
         } else {
             throw new IllegalArgumentException("Object was neither an Activity nor a Fragment.");
         }
-    }
-
-    /**
-     * Show a {@link RationaleDialogFragment} explaining permission request rationale.
-     */
-    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
-    private static void showRationaleDialogFragment(@NonNull android.app.FragmentManager fragmentManager,
-                                                    @NonNull String rationale,
-                                                    @StringRes int positiveButton,
-                                                    @StringRes int negativeButton,
-                                                    int requestCode,
-                                                    @NonNull String... perms) {
-        RationaleDialogFragment
-                .newInstance(positiveButton, negativeButton, rationale, requestCode, perms)
-                .show(fragmentManager, DIALOG_TAG);
     }
 
     private static void runAnnotatedMethods(@NonNull Object object, int requestCode) {
