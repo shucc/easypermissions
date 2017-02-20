@@ -1,4 +1,6 @@
 <resources>
     <string name="rationale_ask_again">请开启应用所需权限,开通后可正常使用.</string>
     <string name="title_settings_dialog">权限申请</string>
+    <string name="dialog_perm_negative">取消</string>
+    <string name="dialog_perm_positive">去设置</string>
 </resources>
