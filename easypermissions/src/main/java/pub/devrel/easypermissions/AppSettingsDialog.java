@@ -120,7 +120,7 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
      * Show the dialog. {@link #show()} is a wrapper to ensure backwards compatibility
      */
     void showDialog() {
-        new AlertDialog.Builder(mContext)
+        new PermissionDialog.Builder(mContext)
                 .setCancelable(false)
                 .setTitle(mTitle)
                 .setMessage(mRationale)
@@ -355,9 +355,9 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
             mTitle = TextUtils.isEmpty(mTitle) ?
                     mContext.getString(R.string.title_settings_dialog) : mTitle;
             mPositiveButton = TextUtils.isEmpty(mPositiveButton) ?
-                    mContext.getString(android.R.string.ok) : mPositiveButton;
+                    mContext.getString(R.string.dialog_perm_positive) : mPositiveButton;
             mNegativeButton = TextUtils.isEmpty(mNegativeButton) ?
-                    mContext.getString(android.R.string.cancel) : mNegativeButton;
+                    mContext.getString(R.string.dialog_perm_negative) : mNegativeButton;
             mRequestCode = mRequestCode > 0 ? mRequestCode : DEFAULT_SETTINGS_REQ_CODE;
 
             return new AppSettingsDialog(
