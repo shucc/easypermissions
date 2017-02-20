@@ -1,140 +1,83 @@
 # EasyPermissions [![Build Status][1]][2]
 
-EasyPermissions is a wrapper library to simplify basic system permissions logic when targeting
-Android M or higher.
+对Google的[easypermissions](https://github.com/googlesamples/easypermissions)进行了一部分修改
 
-## Installation
+## 配置
 
-EasyPermissions is installed by adding the following dependency to your `build.gradle` file:
+在项目的build.gradle中,添加:
 
 ```groovy
-dependencies {
-    compile 'pub.devrel:easypermissions:0.3.0'
-}
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+在使用库的module中添加:
+```groovy
+	dependencies {
+	    compile 'com.github.shucc:easypermissions:v0.2.0'
+	}
 ```
 
-## Usage
-
-### Basic
-
-To begin using EasyPermissions, have your `Activity` (or `Fragment`) override the `onRequestPermissionsResult` method:
-
-```java
-public class MainActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-}
-```
-
-### Request Permissions
-
-The example below shows how to request permissions for a method that requires both
-`CAMERA` and `CHANGE_WIFI_STATE` permissions. There are a few things to note:
-
-  * Using `EasyPermissions#hasPermissions(...)` to check if the app already has the
-    required permissions. This method can take any number of permissions as its final
-    argument.
-  * Requesting permissions with `EasyPermissions#requestPermissions`. This method
-    will request the system permissions and show the rationale string provided if
-    necessary. The request code provided should be unique to this request, and the method
-    can take any number of permissions as its final argument.
-  * Use of the `AfterPermissionGranted` annotation. This is optional, but provided for
-    convenience. If all of the permissions in a given request are granted, any methods
-    annotated with the proper request code will be executed. This is to simplify the common
-    flow of needing to run the requesting method after all of its permissions have been granted.
-    This can also be achieved by adding logic on the `onPermissionsGranted` callback.
-
-```java
-@AfterPermissionGranted(RC_CAMERA_AND_WIFI)
-private void methodRequiresTwoPermission() {
-    String[] perms = {Manifest.permission.CAMERA, Manifest.permission.CHANGE_WIFI_STATE};
-    if (EasyPermissions.hasPermissions(this, perms)) {
-        // Already have permission, do the thing
-        // ...
-    } else {
-        // Do not have permissions, request them now
-        EasyPermissions.requestPermissions(this, getString(R.string.camera_and_wifi_rationale),
-                RC_CAMERA_AND_WIFI, perms);
-    }
-}
-```
-
-Optionally, for a finer control, you can have your `Activity` / `Fragment` implement
-the `PermissionCallbacks` interface.
+## 使用
 
 ```java
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    ...
+
+    @AfterPermissionGranted(RC_CAMERA_PERM)
+    public void cameraTask() {
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
+            Toast.makeText(this, "TODO: Camera things", Toast.LENGTH_LONG).show();
+        } else {
+            //移除一个参数
+            EasyPermissions.requestPermissions(this, RC_CAMERA_PERM, Manifest.permission.CAMERA);
+        }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    ...
 
-        // Forward results to EasyPermissions
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override
-    public void onPermissionsGranted(int requestCode, List<String> list) {
-        // Some permissions have been granted
-        // ...
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> list) {
-        // Some permissions have been denied
-        // ...
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        switch (requestCode) {
+            case RC_CAMERA_PERM:
+                //可自定义布局,自定义布局中id必须使用指定的
+                new AppSettingsDialog.Builder(this)
+                        .setLayoutID(R.layout.dialog_perm_customize)
+                        .setTitle(R.string.camera_perm_title)
+                        .setRationale(R.string.camera_perm_rationale)
+                        .build()
+                        .show();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //取消自定义的权限提示框后,以及从设置界面返回调用
+        switch (requestCode) {
+            case RC_CAMERA_PERM:
+                ...
+            default:
+                break;
+        }
     }
 }
 ```
-
-### Required Permissions
-
-In some cases your app will not function properly without certain permissions. If the user
-denies these permissions with the "Never Ask Again" option, you will be unable to request
-these permissions from the user and they must be changed in app settings. You can use the
-method `EasyPermissions.somePermissionPermanentlyDenied(...)` to display a dialog to the
-user in this situation and direct them to the system setting screen for your app:
-
-```java
-@Override
-public void onPermissionsDenied(int requestCode, List<String> perms) {
-    Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-
-    // (Optional) Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
-    // This will display a dialog directing them to enable the permission in app settings.
-    if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-        new AppSettingsDialog.Builder(this).build().show();
-    }
-}
-
-@Override
-public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
-        // Do something after user returned from app settings screen, like showing a Toast.
-        Toast.makeText(this, R.string.returned_from_app_settings_to_activity, Toast.LENGTH_SHORT)
-                .show();
-    }
-}
-```
-
-[1]: https://travis-ci.org/googlesamples/easypermissions.svg?branch=master
-[2]: https://travis-ci.org/googlesamples/easypermissions
