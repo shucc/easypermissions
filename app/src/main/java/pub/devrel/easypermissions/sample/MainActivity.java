@@ -29,7 +29,6 @@ import java.util.List;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
-import pub.devrel.easypermissions.PermissionDialog;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
@@ -63,10 +62,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @AfterPermissionGranted(RC_CAMERA_PERM)
     public void cameraTask() {
         if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
-            // Have permission, do the thing!
             Toast.makeText(this, "TODO: Camera things", Toast.LENGTH_LONG).show();
         } else {
-            // Ask for one permission
             EasyPermissions.requestPermissions(this, RC_CAMERA_PERM, Manifest.permission.CAMERA);
         }
     }
@@ -75,10 +72,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void locationAndContactsTask() {
         String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_CONTACTS };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            // Have permissions, do the thing!
             Toast.makeText(this, "TODO: Location and Contacts things", Toast.LENGTH_LONG).show();
         } else {
-            // Ask for both permissions
             EasyPermissions.requestPermissions(this, RC_LOCATION_CONTACTS_PERM, perms);
         }
     }
@@ -86,8 +81,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // EasyPermissions handles the request result.
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
@@ -98,19 +91,31 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-
-        // (Optional) Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
-        // This will display a dialog directing them to enable the permission in app settings.
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this).build().show();
+        switch (requestCode) {
+            case RC_CAMERA_PERM:
+                //自定义布局
+                new AppSettingsDialog.Builder(this)
+                        .setLayoutID(R.layout.dialog_perm_customize)
+                        .setTitle(R.string.camera_perm_title)
+                        .setRationale(R.string.camera_perm_rationale)
+                        .build()
+                        .show();
+                break;
+            case RC_LOCATION_CONTACTS_PERM:
+                new AppSettingsDialog.Builder(this)
+                        .setTitle(R.string.location_perm_title)
+                        .setRationale(R.string.location_perm_rationale)
+                        .build()
+                        .show();
+                break;
+            default:
+                break;
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             // Do something after user returned from app settings screen, like showing a Toast.
             Toast.makeText(this, R.string.returned_from_app_settings_to_activity, Toast.LENGTH_SHORT)

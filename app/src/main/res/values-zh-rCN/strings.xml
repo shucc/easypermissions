@@ -11,4 +11,6 @@
     <string name="camera_perm_rationale">请在\"设置-应用-Easy Permissions-权限管理\"中开启相机权限,开通后可以使用相机.</string>
     <string name="location_perm_title">位置权限申请</string>
     <string name="location_perm_rationale">请在\"设置-应用-Easy Permissions-权限管理\"中开启位置信息以及通讯录权限,开通后可以使用定位功能.</string>
+    <string name="sms_perm_title">短信权限申请</string>
+    <string name="sms_perm_rationale">请在\"设置-应用-Easy Permissions-权限管理\"中开启短信权限,开通后可以发送短信.</string>
 </resources>

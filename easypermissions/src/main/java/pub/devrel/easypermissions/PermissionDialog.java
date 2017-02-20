@@ -19,12 +19,9 @@ import android.widget.TextView;
  */
 public class PermissionDialog extends AppCompatDialog {
 
-    private TextView textTitle;
-    private TextView textRotionale;
-    private TextView textNegative;
-    private TextView textPositive;
-
     private Context context;
+
+    private int layoutId;
 
     private String title;
 
@@ -38,10 +35,11 @@ public class PermissionDialog extends AppCompatDialog {
 
     private OnClickListener positiveListener;
 
-    public PermissionDialog(Context context, String title, String content, String textNegative
+    public PermissionDialog(Context context, int layoutId, String title, String content, String textNegative
             , String textPositive) {
         super(context, R.style.MyDialog);
         this.context = context;
+        this.layoutId = layoutId;
         this.title = title;
         this.content = content;
         this.cancelText = textNegative;
@@ -51,12 +49,12 @@ public class PermissionDialog extends AppCompatDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_perm);
+        setContentView(layoutId);
 
-        textTitle = (TextView) findViewById(R.id.dialog_perm_title);
-        textRotionale = (TextView) findViewById(R.id.dialog_perm_rationale);
-        textNegative = (TextView) findViewById(R.id.dialog_perm_negative);
-        textPositive = (TextView) findViewById(R.id.dialog_perm_positive);
+        TextView textTitle = (TextView) findViewById(R.id.dialog_perm_title);
+        TextView textRotionale = (TextView) findViewById(R.id.dialog_perm_rationale);
+        TextView textNegative = (TextView) findViewById(R.id.dialog_perm_negative);
+        TextView textPositive = (TextView) findViewById(R.id.dialog_perm_positive);
 
         textTitle.setText(title);
         textRotionale.setText(content);
@@ -101,6 +99,8 @@ public class PermissionDialog extends AppCompatDialog {
 
         private Context context;
 
+        private int layoutId = -1;
+
         private String title;
 
         private String content;
@@ -125,6 +125,11 @@ public class PermissionDialog extends AppCompatDialog {
 
         public Builder(Context context) {
             this.context = context;
+        }
+
+        public Builder setLayoutID(int layoutId) {
+            this.layoutId = layoutId;
+            return this;
         }
 
         public Builder setTitle(String title) {
@@ -177,11 +182,12 @@ public class PermissionDialog extends AppCompatDialog {
         }
 
         public PermissionDialog create() {
+            layoutId = layoutId == -1 ? R.layout.dialog_perm_default : layoutId;
             title = TextUtils.isEmpty(title) ? context.getString(R.string.title_settings_dialog) : title;
             content = TextUtils.isEmpty(content) ? context.getString(R.string.rationale_ask_again) : content;
             cancelText = TextUtils.isEmpty(cancelText) ? context.getString(R.string.dialog_perm_negative) : cancelText;
             okText = TextUtils.isEmpty(okText) ? context.getString(R.string.dialog_perm_positive) : okText;
-            PermissionDialog permissionDialog = new PermissionDialog(context, title, content, cancelText, okText);
+            PermissionDialog permissionDialog = new PermissionDialog(context, layoutId, title, content, cancelText, okText);
             permissionDialog.setCancelable(cancelable);
             if (cancelable) {
                 permissionDialog.setCanceledOnTouchOutside(true);
