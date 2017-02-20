@@ -29,8 +29,7 @@ public class BasicActivity extends Activity implements EasyPermissions.Permissio
             @Override
             public void onClick(View v) {
                 // Request SMS permission
-                EasyPermissions.requestPermissions(BasicActivity.this, "NEED SMS PLZ", 1001,
-                        Manifest.permission.READ_SMS);
+                EasyPermissions.requestPermissions(BasicActivity.this,  1001, Manifest.permission.READ_SMS);
             }
         });
     }
