@@ -42,15 +42,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Button click listener that will request one permission.
         findViewById(R.id.button_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cameraTask();
             }
         });
-
-        // Button click listener that will request two permissions.
         findViewById(R.id.button_location_and_wifi).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
             Toast.makeText(this, "TODO: Camera things", Toast.LENGTH_LONG).show();
         } else {
+            //移除一个参数
             EasyPermissions.requestPermissions(this, RC_CAMERA_PERM, Manifest.permission.CAMERA);
         }
     }
@@ -74,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (EasyPermissions.hasPermissions(this, perms)) {
             Toast.makeText(this, "TODO: Location and Contacts things", Toast.LENGTH_LONG).show();
         } else {
+            //移除一个参数
             EasyPermissions.requestPermissions(this, RC_LOCATION_CONTACTS_PERM, perms);
         }
     }
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         switch (requestCode) {
             case RC_CAMERA_PERM:
-                //自定义布局
+                //可自定义布局,自定义布局中id必须使用指定的
                 new AppSettingsDialog.Builder(this)
                         .setLayoutID(R.layout.dialog_perm_customize)
                         .setTitle(R.string.camera_perm_title)
