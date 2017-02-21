@@ -64,11 +64,10 @@ public class PermissionDialog extends AppCompatDialog {
         textNegative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (negativeListener == null) {
-                    dismiss();
-                } else {
+                if (negativeListener != null) {
                     negativeListener.onClick(PermissionDialog.this, DialogInterface.BUTTON_NEGATIVE);
                 }
+                dismiss();
             }
         });
         textPositive.setOnClickListener(new View.OnClickListener() {
@@ -79,10 +78,10 @@ public class PermissionDialog extends AppCompatDialog {
                     Uri uri = Uri.fromParts("package", context.getPackageName(), null);
                     intent.setData(uri);
                     context.startActivity(intent);
-                    dismiss();
                 } else {
                     positiveListener.onClick(PermissionDialog.this, DialogInterface.BUTTON_POSITIVE);
                 }
+                dismiss();
             }
         });
     }
