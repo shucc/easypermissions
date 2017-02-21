@@ -52,6 +52,8 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
     private Object mActivityOrFragment;
     private DialogInterface.OnClickListener mNegativeListener;
 
+    private PermissionDialog permissionDialog;
+
     private AppSettingsDialog(Parcel in) {
         layoutId = in.readInt();
         mRationale = in.readString();
@@ -123,15 +125,21 @@ public class AppSettingsDialog implements Parcelable, DialogInterface.OnClickLis
      * Show the dialog. {@link #show()} is a wrapper to ensure backwards compatibility
      */
     void showDialog() {
-        new PermissionDialog.Builder(mContext)
+        permissionDialog = new PermissionDialog.Builder(mContext)
                 .setCancelable(false)
                 .setLayoutID(layoutId)
                 .setTitle(mTitle)
                 .setMessage(mRationale)
                 .setPositiveButton(mPositiveButtonText, this)
                 .setNegativeButton(mNegativeButtonText, mNegativeListener)
-                .create()
-                .show();
+                .create();
+        permissionDialog.show();
+    }
+
+    void hideDialog() {
+        if (null != permissionDialog && permissionDialog.isShowing()) {
+            permissionDialog.dismiss();
+        }
     }
 
     @Override

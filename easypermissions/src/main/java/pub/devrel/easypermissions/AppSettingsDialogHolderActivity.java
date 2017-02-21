@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class AppSettingsDialogHolderActivity extends AppCompatActivity implements DialogInterface.OnClickListener {
+
+    private AppSettingsDialog dialog;
+
     public static Intent createShowDialogIntent(Context context, AppSettingsDialog dialog) {
         return new Intent(context, AppSettingsDialogHolderActivity.class)
                 .putExtra(AppSettingsDialog.EXTRA_APP_SETTINGS, dialog);
@@ -18,7 +21,7 @@ public class AppSettingsDialogHolderActivity extends AppCompatActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppSettingsDialog dialog = getIntent().getParcelableExtra(AppSettingsDialog.EXTRA_APP_SETTINGS);
+        dialog = getIntent().getParcelableExtra(AppSettingsDialog.EXTRA_APP_SETTINGS);
         dialog.setContext(this);
         dialog.setActivityOrFragment(this);
         dialog.setNegativeListener(this);
@@ -36,5 +39,13 @@ public class AppSettingsDialogHolderActivity extends AppCompatActivity implement
         super.onActivityResult(requestCode, resultCode, data);
         setResult(resultCode, data);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != dialog) {
+            dialog.hideDialog();
+        }
     }
 }
