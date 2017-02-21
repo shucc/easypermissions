@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case RC_CAMERA_PERM:
                 //可自定义布局,自定义布局中id必须使用指定的
                 new AppSettingsDialog.Builder(this)
+                        .setRequestCode(RC_CAMERA_PERM)
                         .setLayoutID(R.layout.dialog_perm_customize)
                         .setTitle(R.string.camera_perm_title)
                         .setRationale(R.string.camera_perm_rationale)
@@ -119,6 +120,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             // Do something after user returned from app settings screen, like showing a Toast.
             Toast.makeText(this, R.string.returned_from_app_settings_to_activity, Toast.LENGTH_SHORT)
                     .show();
+        } else if (requestCode == RC_CAMERA_PERM) {
+            //从App设置界面返回
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Returned from app settings to MainActivity", Toast.LENGTH_SHORT)
+                        .show();
+            } else if (resultCode == RESULT_CANCELED) {
+                //取消返回
+                Toast.makeText(this, "Returned from cancel", Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
     }
 }

@@ -37,7 +37,7 @@ public class AppSettingsDialogHolderActivity extends AppCompatActivity implement
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        setResult(resultCode, data);
+        setResult(RESULT_OK, data);
         finish();
     }
 
