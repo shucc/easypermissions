@@ -1,4 +1,4 @@
-# EasyPermissions [![Build Status][1]][2]
+# EasyPermissions
 
 对Google的[easypermissions](https://github.com/googlesamples/easypermissions)进行了一部分修改
 
