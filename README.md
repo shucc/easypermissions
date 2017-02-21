@@ -75,14 +75,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         //取消自定义的权限提示框后,以及从设置界面返回调用
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             //默认的requestCode
-        } else {
-            //自定义的requestCode
+        } else if (resultCode == RESULT_OK) {
+            //自定义的requestCode,从设置界面返回
             switch (requestCode) {
                 case RC_CAMERA_PERM:
                     ...
                 default:
                     break;
             }
+        } else if (resultCode == RESULT_CANCELED) {
+            //自定义的requestCode,取消返回
         }
     }
 }
