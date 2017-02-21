@@ -17,7 +17,7 @@
 在使用库的module中添加:
 ```groovy
 	dependencies {
-	    compile 'com.github.shucc:easypermissions:v0.2.0'
+	    compile 'com.github.shucc:easypermissions:v0.4.0'
 	}
 ```
 
