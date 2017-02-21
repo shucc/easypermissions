@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case RC_CAMERA_PERM:
                 //可自定义布局,自定义布局中id必须使用指定的
                 new AppSettingsDialog.Builder(this)
+                        .setRequestCode(RC_CAMERA_PERM)
                         .setLayoutID(R.layout.dialog_perm_customize)
                         .setTitle(R.string.camera_perm_title)
                         .setRationale(R.string.camera_perm_rationale)
@@ -72,11 +73,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //取消自定义的权限提示框后,以及从设置界面返回调用
-        switch (requestCode) {
-            case RC_CAMERA_PERM:
-                ...
-            default:
-                break;
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
+            //默认的requestCode
+        } else {
+            //自定义的requestCode
+            switch (requestCode) {
+                case RC_CAMERA_PERM:
+                    ...
+                default:
+                    break;
+            }
         }
     }
 }
